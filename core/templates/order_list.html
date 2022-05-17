@@ -1,19 +1,22 @@
 {% extends "base.html" %}
-
+{% load bootstrap5 %}
 {% block content-title %}
 {{title}}
 {% endblock %}
 
 {% block content %}
 
+{% bootstrap_messages %}
 <br/>   
-<form class="form" method="post">
+<form class="form" method="post" action={{action}}>
     {% csrf_token %}
     <div class="row">
-        {% bootstrap_form form layout='inline' %}
+        {% for field in form %}
+        {% bootstrap_field field show_label=False %}
+        {% endfor %}
         <div class="col">
             <button type="submit" class="btn btn-primary">
-                Consultar API
+                Salvar
             </button>
         </div>
     </div>
