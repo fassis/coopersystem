@@ -1,63 +1,34 @@
-from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+import json
+from multiprocessing import context
+from urllib import request
+from django.http import HttpResponse
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+from django.db import transaction
+from django.contrib import messages
+from rest_framework.renderers import JSONRenderer
+from core.forms import ProductForm
 
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from core.serializers import ProductSerializer
+from core.models import Product, Order
 
-from core.models import Product
-# Create your views here.
-
-def index(request):
-	return render(request, 'list_products.html')
-
-@api_view(['GET'])
-def api_overview(request):
-	api_urls = {
-		'List':'/product-list/',
-		'Detail':'/product-detail/<str:pk>/',
-		'Create':'/product-create/',
-		'Update':'/product-update/<str:pk>/',
-		'Delete':'/product-delete/<str:pk>/',
-		}
-
-	return Response(api_urls)
-
-@api_view(['GET'])
+@login_required
 def product_list(request):
-	Products = Product.objects.all().order_by('-id')
-	serializer = ProductSerializer(Products, many=True)
-	return Response(serializer.data)
+    products = Product.objects.all().order_by('-created_at')
+	
+	form = ProductForm()
+	context = {'object_list': products,
+				'title':'Produtos',
+				'form':form,
+				}
 
-@api_view(['GET'])
-def product_detail(request, pk):
-	Products = Product.objects.get(id=pk)
-	serializer = ProductSerializer(Products, many=False)
-	return Response(serializer.data)
-
-
-@api_view(['POST'])
-def product_create(request):
-	serializer = ProductSerializer(data=request.data)
-
-	if serializer.is_valid():
-		serializer.save()
-	return Response(serializer.data)
-
-@api_view(['POST'])
-def product_update(request, pk):
-	Product = Product.objects.get(id=pk)
-	serializer = ProductSerializer(instance=Product, data=request.data)
-
-	if serializer.is_valid():
-		serializer.save()
-
-	return Response(serializer.data)
+    return render(request, 'generic_list.html', context )
 
 
-@api_view(['DELETE'])
-def product_delete(request, pk):
-	Product = Product.objects.get(id=pk)
-	Product.delete()
+@login_required
+def order_list(request):
+    orders = Order.objects.all().order_by('-created_at')
+    
+	context = {'object_list': orders,'title':'Pedidos'}
 
-	return Response('Item deletado com sucesso!')
+    return render(request, 'generic_list.html', context)
