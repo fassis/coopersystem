@@ -26,11 +26,20 @@ urlpatterns = [
 
 	### VIEWS ###
 
-	path('product_list', 
+	path('product_list/', 
         views.product_list, 
 		name='product_list'),
 	
-	path('order_list', 
+	path('product_create/', 
+        views.product_create, 
+		name='product_create'),
+	
+	path('product_update/<int:pk>/', 
+        views.product_update, 
+		name='product_update'),
+	
+	path('order_list/', 
         views.order_list, 
-        name='order_list'),
+        name='order_list')
+	
 ]

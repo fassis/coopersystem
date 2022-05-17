@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load bootstrap5 %}
+{% block content-title %}
+{{title}}
+{% endblock %}
+
+{% block content %}
+
+{% bootstrap_messages %}
+<br/>   
+<form class="form" method="post" action={{action}}>
+    {% csrf_token %}
+    <div class="row">
+        {% for field in form %}
+        {% bootstrap_field field show_label=False %}
+        {% endfor %}
+        <div class="col">
+            <button type="submit" class="btn btn-primary">
+                Salvar
+            </button>
+        </div>
+    </div>
+</form>
+<br/>
+{%  if object_list %}
+<table class="table table-striped">
+    {% for obj in object_list %}
+        {% if forloop.first %}
+        <thead>
+            <tr>
+                {% for label, value in obj.field_list %}
+                <th>{{label}}</th>
+                {% endfor %}
+                <th><a>Editar</a></th>
+                <th><a>Fazer Pedido</a></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% endif %}
+            <tr>
+                {% for label, value in obj.field_list %}
+                <td><a>{{value}}</a></td>
+                {% endfor %}
+                <td><a href="{% url 'product_update' obj.pk %}">Editar</a></td>
+                <td>{%if obj.get_situation %}<a href="">Pedir</a>{%endif%}</td>
+            </tr>
+            {% if forloop.last %}
+        </tbody>
+        <tfoot>
+            <tr>
+                {% for label, value in obj.field_list %}
+                <th>{{label}}</th>
+                {% endfor %}
+                <th><a>Editar</a></th>
+                <th><a>Fazer Pedido</a></th>
+            </tr>
+        </tfoot>
+        {% endif %}
+    {% endfor %}
+</table>
+{% endif %}
+{% endblock %}
