@@ -47,37 +47,37 @@ cd coopersystem
 python -m venv venv
 ```
 
-2. Rode o comando
+3. Rode o comando
 ```console
 .\venv\Scrips\activate
 ```
 
-3. No ambiente virtual, rode o comando
+4. No ambiente virtual, rode o comando
 ```console
 pip install -r requirements.txt
 ```
 
-4. Rode o comando
+5. Rode o comando
 ```console
 python manage.py makemigrations
 ```
 
-5. Rode o comando
+6. Rode o comando
 ```console
 python manage.py migrate
 ```
 
-6. Rode o comando
+7. Rode o comando
 ```console
 python manage.py createsuperuser
 ```
 
-7. Rode o comando
+8. Rode o comando
 ```console
 python manage.py runserver
 ```
 
-8. Acesse a aplicação na porta 8000. 
+9. Acesse a aplicação na porta 8000. 
 ```console
 http://localhost:8000
 ```
