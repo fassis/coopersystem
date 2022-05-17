@@ -1,0 +1,8 @@
+Django>=3.2
+psycopg2-binary>=2.8
+django-bootstrap-v5
+djangorestframework
+requests
+pandas
+openpyxl
+coverage
