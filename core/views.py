@@ -14,7 +14,7 @@ from core.models import Product, Order
 
 @login_required
 def product_list(request):
-    products = Product.objects.all().order_by('-created_at')
+	products = Product.objects.all().order_by('-created_at')
 	
 	form = ProductForm()
 	context = {'object_list': products,
@@ -22,13 +22,13 @@ def product_list(request):
 				'form':form,
 				}
 
-    return render(request, 'generic_list.html', context )
+	return render(request, 'generic_list.html', context )
 
 
 @login_required
 def order_list(request):
-    orders = Order.objects.all().order_by('-created_at')
-    
+	orders = Order.objects.all().order_by('-created_at')
+	
 	context = {'object_list': orders,'title':'Pedidos'}
 
-    return render(request, 'generic_list.html', context)
+	return render(request, 'generic_list.html', context)
