@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content-title %}
+{{title}}
+{% endblock %}
+
+{% block content %}
+
+<br/>   
+<form class="form" method="post">
+    {% csrf_token %}
+    <div class="row">
+        {% bootstrap_form form layout='inline' %}
+        <div class="col">
+            <button type="submit" class="btn btn-primary">
+                Consultar API
+            </button>
+        </div>
+    </div>
+</form>
+<br/>
+{%  if object_list %}
+<table class="table table-striped">
+    {% for obj in object_list %}
+        {% if forloop.first %}
+        <thead>
+            <tr>
+                {% for label, value in obj.field_list %}
+                <th>{{label}}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+        {% endif %}
+            <tr>
+                {% for label, value in obj.field_list %}
+                <td><a>{{value}}</a></td>
+                {% endfor %}
+            </tr>
+            {% if forloop.last %}
+        </tbody>
+        <tfoot>
+            <tr>
+                {% for label, value in obj.field_list %}
+                <th>{{label}}</th>
+                {% endfor %}
+            </tr>
+        </tfoot>
+        {% endif %}
+    {% endfor %}
+</table>
+{% endif %}
+{% endblock %}

@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
+from django.contrib.auth import views as auth_views
 
 from core.api import viewsets
 from core import urls as core_urls
@@ -28,5 +29,10 @@ route.register(r'orders',viewsets.OrderViewSet, basename="Orders")
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('drf_api/', include(route.urls)),
-    path('api/', include(core_urls)),
+    path('', include(core_urls)),
+    path('login/', auth_views.LoginView.as_view(template_name='login.html',
+         redirect_authenticated_user=True),
+         name='login'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='/login/'), 
+        name='logout'),
 ]
