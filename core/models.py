@@ -42,7 +42,8 @@ class Product(models.Model):
     
     def get_situation_display(self):
         """Product situation"""
-        return PRODUCT_SITUATION[self.get_situation]
+        sit = DISPONIVEL if self.quantity > 0 else INDISPONIVEL
+        return PRODUCT_SITUATION[sit]
     
     def field_list(self):
         return [
