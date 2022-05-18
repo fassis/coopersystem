@@ -3,9 +3,7 @@
 {% block content-title %}
 {{title}}
 {% endblock %}
-
 {% block content %}
-
 {% bootstrap_messages %}
 <br/>   
 <form class="form" method="post" action={{action}}>
@@ -18,6 +16,7 @@
             <button type="submit" class="btn btn-primary">
                 Salvar
             </button>
+            <input type="button" class="btn btn-primary" value="Voltar" onClick="history.go(-1)">
         </div>
     </div>
 </form>
@@ -31,8 +30,10 @@
                 {% for label, value in obj.field_list %}
                 <th>{{label}}</th>
                 {% endfor %}
+                <th><a>Situação</a></th>
                 <th><a>Editar</a></th>
-                <th><a>Fazer Pedido</a></th>
+                <th><a>Pedir</a></th>
+                <th><a>Excluir</a></th>
             </tr>
         </thead>
         <tbody>
@@ -41,8 +42,21 @@
                 {% for label, value in obj.field_list %}
                 <td><a>{{value}}</a></td>
                 {% endfor %}
-                <td><a href="{% url 'product_update' obj.pk %}">Editar</a></td>
-                <td>{%if obj.get_situation %}<a href="">Pedir</a>{%endif%}</td>
+                <td>
+                    <a class={% if obj.quantity == 0 %}"btn btn-secondary btn-sm"{%else%}"btn btn-success btn-sm"{%endif%}role="button">{{obj.get_situation_display}}</a>
+                </td>
+                <td>
+                    <a class="btn btn-outline-warning btn-sm" href="{% url 'product_update' obj.pk %}" role="button">Editar</a>
+                </td>
+
+                <td>
+                    {%if obj.get_situation %}<a class="btn btn-outline-primary btn-sm" href="{% url 'order_create' obj.pk %}" role="button">Pedir</a>{%endif%}
+                </td>
+                <td>
+                    <form name='delete_form' action="{% url 'product_delete' obj.id %}" method='POST' onclick="return deletechecked()"> {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger btn-sm">Excluir</button>
+                    </form>
+                </td>
             </tr>
             {% if forloop.last %}
         </tbody>
@@ -51,12 +65,27 @@
                 {% for label, value in obj.field_list %}
                 <th>{{label}}</th>
                 {% endfor %}
+                <th><a>Situação</a></th>
                 <th><a>Editar</a></th>
-                <th><a>Fazer Pedido</a></th>
+                <th><a>Pedir</a></th>
+                <th><a>Excluir</a></th>
             </tr>
         </tfoot>
         {% endif %}
     {% endfor %}
 </table>
 {% endif %}
+{% endblock %}
+
+{% block extra-js %}
+<script type="text/javascript" > 
+    function deletechecked()
+    {
+        var answer = "Realmente deseja excluir ?";
+        if (confirm(answer)){
+         document.delete_form.submit();
+        }
+        return false;  
+    }
+</script>
 {% endblock %}

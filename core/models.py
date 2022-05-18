@@ -49,9 +49,8 @@ class Product(models.Model):
         return [
                 (u'Cod', self.pk),
                 (u'Nome', self.name),
-                (u'Valor unitário', self.value),
+                (u'Valor unitário', u"R$ %.2f"%(self.value)),
                 (u'Quantidade', self.quantity),
-                (u'Situação', self.get_situation_display()),
                 ]
 
 class Order(models.Model):
@@ -65,7 +64,8 @@ class Order(models.Model):
     district = models.CharField(max_length=253)
     number = models.PositiveIntegerField()
     dispatcher = models.CharField(max_length=253)
-    situation = models.PositiveIntegerField(validators=[validate_interval])
+    situation = models.PositiveIntegerField(validators=[validate_interval], 
+                default=PENDENTE)
     created_at = models.DateTimeField(auto_now_add=True)
     sent_at = models.DateTimeField(null=True, blank=True)
     received_at = models.DateTimeField(null=True, blank=True)
@@ -81,13 +81,24 @@ class Order(models.Model):
     
     def get_situation_display(self):
         """Order situation"""
-        return PRODUCT_SITUATION[self.get_situation]
+        return ORDER_SITUATION[self.situation]
+    
+    def get_next_situation(self):
+        """Next order situation from current situation"""
+        if self.situation < ENTREGUE:
+            return self.situation+1
+        return self.situation
+    
+    def get_unitary_value(self):
+        """Unitary value from order"""
+        return self.value/self.quantity
     
     def field_list(self):
         return [
                 (u'Cod', self.pk),
+                (u'Data Pedido', self.created_at),
                 (u'Produto', self.product),
-                (u'Valor unitário', self.value),
+                (u'Valor Pedido', u"R$ %.2f"%(self.value)),
                 (u'Quantidade', self.quantity),
-                (u'Situação', self.get_situation_display()),
+                (u'Valor Unitário', u"R$ %.2f"%(self.get_unitary_value())),
                 ]
