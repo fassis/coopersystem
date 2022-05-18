@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     'knox',
     #Bootstrap
     'bootstrap5',
+    #Swagger
+    'drf_spectacular',
     #Application
     'core', 
 ]
@@ -70,8 +72,16 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         # 'rest_framework.authentication.BasicAuthentication',
         # 'rest_framework.authentication.SessionAuthentication',
-        'knox.auth.TokenAuthentication',
-    ]
+        'knox.auth.TokenAuthentication'],
+        'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Sistema de cadastro de Produtos e Pedidos',
+    'DESCRIPTION': 'Teste técnico Coopersystem',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
 }
 
 ROOT_URLCONF = 'coopersystem.urls'

@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from django.contrib.auth import views as auth_views
-
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from core.api import viewsets
 from core import urls as core_urls
 
@@ -27,6 +27,11 @@ route.register(r'products',viewsets.ProductViewSet, basename="Products")
 route.register(r'orders',viewsets.OrderViewSet, basename="Orders")
 
 urlpatterns = [
+    # YOUR PATTERNS
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    # Optional UI:
+    path('api/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     path('admin/', admin.site.urls),
     path('drf_api/', include(route.urls)),
     path('', include(core_urls)),
