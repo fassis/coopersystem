@@ -8,3 +8,4 @@ openpyxl
 coverage
 django-cors-headers
 django-rest-knox
+drf-spectacular
