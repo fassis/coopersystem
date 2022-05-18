@@ -7,3 +7,4 @@ pandas
 openpyxl
 coverage
 django-cors-headers
+django-rest-knox

@@ -6,8 +6,8 @@
 
 {% block content %}
 
-{% bootstrap_messages %}
-<br/>   
+{% bootstrap_messages %}  
+{%  if form %}
 <form class="form" method="post" action={{action}}>
     {% csrf_token %}
     <div class="row">
@@ -18,10 +18,12 @@
             <button type="submit" class="btn btn-primary">
                 Salvar
             </button>
+            <input type="button" class="btn btn-primary" value="Voltar" onClick="history.go(-1)">
         </div>
     </div>
 </form>
 <br/>
+{%  endif %}
 {%  if object_list %}
 <table class="table table-striped">
     {% for obj in object_list %}
@@ -31,6 +33,10 @@
                 {% for label, value in obj.field_list %}
                 <th>{{label}}</th>
                 {% endfor %}
+                <th><a>Situação</a></th>
+                <th><a>Editar</a></th>
+                <th><a>Excluir</a></th>
+                <th><a>Ação</a></th>
             </tr>
         </thead>
         <tbody>
@@ -39,6 +45,33 @@
                 {% for label, value in obj.field_list %}
                 <td><a>{{value}}</a></td>
                 {% endfor %}
+                <td>
+                    <a class="{% if obj.situation == 2 %} btn btn-success btn-sm {% elif obj.situation == 1 %} btn btn-info btn-sm {% else %} btn btn-warning btn-sm {% endif %}"  role="button">{{obj.get_situation_display}}</a>
+                </td>
+
+                <td>{% if obj.situation == 0 %}
+                    <a class="btn btn-outline-warning btn-sm" href="{% url 'order_update' obj.pk %}" role="button">Editar</a>
+                    {% endif %}
+                </td>
+
+                <td>{% if obj.situation == 0 %}
+                    <form name='delete_form' action="{% url 'order_delete' obj.id %}" method='POST' onclick="return deletechecked()"> {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger btn-sm">Excluir</button>
+                    </form>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if obj.situation == 0 %}
+                    <form name='act_form' action="{% url 'order_send' obj.pk %}" method='POST' onclick="return sendchecked()"> {% csrf_token %}
+                        <button type="submit" class="btn btn-primary btn-sm">Enviar Pedido</button>
+                    </form>
+                    {% elif obj.situation == 1 %}
+                    <form name='act_form' action="{% url 'order_delivered' obj.pk %}" method='POST' onclick="return deliveredchecked()"> {% csrf_token %}
+                        <button type="submit" class="btn btn-primary btn-sm">Receber Pedido</button>
+                    </form>
+                    {% endif %}
+                   
+                </td>
             </tr>
             {% if forloop.last %}
         </tbody>
@@ -47,10 +80,47 @@
                 {% for label, value in obj.field_list %}
                 <th>{{label}}</th>
                 {% endfor %}
+                <th><a>Situação</a></th>
+                <th><a>Editar</a></th>
+                <th><a>Excluir</a></th>
+                <th><a>Ação</a></th>
             </tr>
         </tfoot>
         {% endif %}
     {% endfor %}
 </table>
 {% endif %}
+{% endblock %}
+
+{% block extra-js %}
+<script type="text/javascript" > 
+    function deletechecked()
+    {
+        var answer = "Realmente deseja excluir ?";
+        if (confirm(answer)){
+         document.delete_form.submit();
+        }
+        return false;  
+    }
+</script>
+<script type="text/javascript" > 
+    function sendchecked()
+    {
+        var answer = "Realmente deseja enviar o pedido ?";
+        if (confirm(answer)){
+         document.send_form.submit();
+        }
+        return false;  
+    }
+</script>
+<script type="text/javascript" > 
+    function deliveredchecked()
+    {
+        var answer = "Você confirma o recebimento do o pedido ?";
+        if (confirm(answer)){
+         document.received_form.submit();
+        }
+        return false;  
+    }
+</script>
 {% endblock %}
