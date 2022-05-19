@@ -43,7 +43,7 @@
         {% endif %}
             <tr>
                 {% for label, value in obj.field_list %}
-                <td><a>{{value}}</a></td>
+                <td><a href="{% url 'order_detail' obj.pk %}">{{value}}</a></td>
                 {% endfor %}
                 <td>
                     <a class="{% if obj.situation == 2 %} btn btn-success btn-sm {% elif obj.situation == 1 %} btn btn-info btn-sm {% else %} btn btn-warning btn-sm {% endif %}"  role="button">{{obj.get_situation_display}}</a>
@@ -122,5 +122,37 @@
         }
         return false;  
     }
+</script>
+
+<script>
+    $(document).ready(function(){
+        $("#id_zip_code").focusout(function(){
+  
+            var cep = $("#id_zip_code").val().replace(/\D/g, '');
+        
+            if (cep != "") {
+        
+                var validacep = /^[0-9]{8}$/;
+        
+                if(validacep.test(cep)) {
+        
+                $.getJSON("//viacep.com.br/ws/"+ cep +"/json/?callback=?", function(dados) {
+        
+                        if (!("erro" in dados)) {
+                            $("#id_address").val(dados.logradouro);
+                            $("#id_district").val(dados.bairro);
+                            $("#id_city").val(dados.localidade);
+                        } //end if.
+                        else {
+                            console.log("CEP não encontrado.");
+                        }
+                    });
+                } //end if.
+                else {
+                    console.log("Formato de CEP inválido.");
+                }
+            } //end if.
+          });
+        });
 </script>
 {% endblock %}

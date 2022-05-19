@@ -14,6 +14,9 @@ from core.forms import OrderEditForm, OrderForm, ProductForm, ProductUpdateForm
 
 from core.models import ENTREGUE, ENVIADO, PENDENTE, Product, Order
 
+def login_api(request):
+	return render(request, 'login_api.html')
+
 @login_required
 def index(request):
 	return render(request, 'base.html')
@@ -115,9 +118,19 @@ def order_create(request,product_pk):
     return render(request, 'order_list.html', context)
 
 @login_required
+def order_detail(request,pk):
+    order = get_object_or_404(Order,pk=pk)
+    context = {
+                'order':order,
+                'action':'/product_delete/%d/'%(pk),
+                'title':'Detalhes do Pedido %d'%(pk),
+                }
+    return render(request, 'order_detail.html', context)
+
+@login_required
 @csrf_exempt
-def order_update(request,order_pk):
-    order = get_object_or_404(Order,pk=order_pk)
+def order_update(request,pk):
+    order = get_object_or_404(Order,pk=pk)
     product = get_object_or_404(Product,pk=order.product.pk)
     form = OrderEditForm(request.POST or None,instance=order)
     if request.method =="POST" and order.situation == PENDENTE:
@@ -146,7 +159,7 @@ def order_update(request,order_pk):
                             'Não é possível editar pedidos enviados ou recebidos!')
     context = {
                 'form':form,
-                'action':'/order_update/%d/'%(order_pk),
+                'action':'/order_update/%d/'%(pk),
                 'title':'Pedidos',
                 }
     return render(request, 'order_list.html', context)

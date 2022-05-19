@@ -19,6 +19,7 @@ from rest_framework import routers
 from django.contrib.auth import views as auth_views
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from core.api import viewsets
+from core.views import  login_api
 from core import urls as core_urls
 
 route = routers.DefaultRouter()
@@ -35,7 +36,13 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('drf_api/', include(route.urls)),
     path('', include(core_urls)),
-    path('login/', auth_views.LoginView.as_view(template_name='login.html',
+
+    ### Login by api form ###
+	path('login/', login_api, 
+		name="login_api_view"),
+        
+    ##Traditional login##
+    path('login2/', auth_views.LoginView.as_view(template_name='login.html',
          redirect_authenticated_user=True),
          name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='/login/'), 
