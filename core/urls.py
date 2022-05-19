@@ -1,5 +1,7 @@
 from django.urls import path
-from . import views, api_views
+from knox import views as knox_views
+
+from core import views, api_views
 
 urlpatterns = [
 
@@ -7,7 +9,13 @@ urlpatterns = [
 	path('api/register/', 
 		api_views.RegisterAPI.as_view(), 
 		name='register'),
-	
+	path('api/login/', api_views.LoginAPI.as_view(),
+		name='login_api'),
+    path('api/logout/', knox_views.LogoutView.as_view(), 
+		name='logout_api'),
+    path('api/logoutall/', knox_views.LogoutAllView.as_view(), 
+		name='logoutall_api'),
+
 	### API VIEWS ###
     
 	path('urls', api_views.api_overview, 
@@ -57,7 +65,11 @@ urlpatterns = [
         views.order_create,
 		name='order_create'),
 
-	path('order_update/<int:order_pk>/',
+	path('order_detail/<int:pk>/',
+        views.order_detail,
+		name='order_detail'),
+
+	path('order_update/<int:pk>/',
         views.order_update,
 		name='order_update'),
 	

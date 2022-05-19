@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% load bootstrap5 %}
+{% block content-title %}
+{{title}}
+{% endblock %}
+
+{% block content %}
+
+{% bootstrap_messages %}  
+{%  if order %}
+<table class="table table-striped">
+        <tbody>
+            <tr>
+                <td colspan=2><b>Número do Pedido</b></td>
+                <td colspan=2>{{order.pk}}</td>
+            </tr>
+            <tr>
+                <td colspan=2><b>Data Pedido</b></td>
+                <td colspan=2>{{order.created_at}}</td>
+            </tr>
+            <tr>
+                <td colspan=2><b>Produto</b></td>
+                <td colspan=2>{{order.product}}</td>
+            </tr>
+            <tr>
+                <td colspan=2><b>Quantidade</b></td>
+                <td colspan=2>{{order.quantity}}</td>
+            </tr>
+            <tr>
+                <td colspan=2><b>Valor unitário</b></td>
+                <td colspan=2>{{order.get_unitary_value|floatformat:2}}</td>
+            </tr>
+            <tr>
+                <td colspan=2><b>Valor Final</b></td>
+                <td colspan=2>{{order.value|floatformat:2}}</td>
+            </tr>
+            
+            <tr>
+                <td colspan=2><b>Envio</b></td>
+                <td colspan=2>
+                    {%  if order.sent_at %}
+                    Pedido enviado em {{order.sent_at}}
+                    {% else %}
+                    Aguardando envio do pedido
+                    {% endif %}
+                </td>
+            </tr>
+            {%  if order.sent_at %}
+            <tr>
+                <td colspan=2><b>Entrega</b></td>
+                <td colspan=2>
+                    {%  if order.received_at %}
+                    Pedido entregue em {{order.received_at}}
+                    {% else %}
+                    Aguardando entrega do pedido
+                    {% endif %}
+                </td>
+            </tr>
+            {% endif %}
+            <td>
+                <input type="button" class="btn btn-primary btn-sm" value="Voltar" onClick="history.go(-1)">
+                <td>{% if order.situation == 0 %}
+                    <a class="btn btn-outline-warning btn-sm" href="{% url 'order_update' order.pk %}" role="button">Editar</a>
+                    {% endif %}
+                </td>
+
+                <td>{% if order.situation == 0 %}
+                    <form name='delete_form' action="{% url 'order_delete' order.id %}" method='POST' onclick="return deletechecked()"> {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger btn-sm">Excluir</button>
+                    </form>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if order.situation == 0 %}
+                    <form name='act_form' action="{% url 'order_send' order.pk %}" method='POST' onclick="return sendchecked()"> {% csrf_token %}
+                        <button type="submit" class="btn btn-primary btn-sm">Enviar Pedido</button>
+                    </form>
+                    {% elif order.situation == 1 %}
+                    <form name='act_form' action="{% url 'order_delivered' order.pk %}" method='POST' onclick="return deliveredchecked()"> {% csrf_token %}
+                        <button type="submit" class="btn btn-primary btn-sm">Receber Pedido</button>
+                    </form>
+                    {% endif %}
+                   
+                </td>
+                
+            </td>
+        </tbody>
+</table>
+{% endif %}
+{% endblock %}
+
+{% block extra-js %}
+<script type="text/javascript" > 
+    function deletechecked()
+    {
+        var answer = "Realmente deseja excluir ?";
+        if (confirm(answer)){
+         document.delete_form.submit();
+        }
+        return false;  
+    }
+</script>
+<script type="text/javascript" >
+    function sendchecked()
+    {
+        var answer = "Realmente deseja enviar o pedido ?";
+        if (confirm(answer)){
+         document.send_form.submit();
+        }
+        return false;  
+    }
+</script>
+<script type="text/javascript" > 
+    function deliveredchecked()
+    {
+        var answer = "Você confirma o recebimento do o pedido ?";
+        if (confirm(answer)){
+         document.received_form.submit();
+        }
+        return false;  
+    }
+</script>
+{% endblock %}
